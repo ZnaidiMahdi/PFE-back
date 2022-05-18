@@ -1,19 +1,39 @@
 security:
-    encoders:
-        App\Entity\User:
-            algorithm: bcrypt
+    password_hashers:
+        # By default, password hashers are resource intensive and take time. This is
+        # important to generate secure password hashes. In tests however, secure hashes
+        # are not important, waste resources and increase test times. The following
+        # reduces the work factor to the lowest possible values.
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+            algorithm: auto
+            cost: 4 # Lowest possible value for bcrypt
+            time_cost: 3 # Lowest possible value for argon
+            memory_cost: 10 # Lowest possible value for argon
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        chain_provider:
+        app_users:
             chain:
-                providers: app_user_provider
+                providers: [app_user_provider,app_docteur_provider, app_patient_provider]
 
+        app_patient_provider:
+            entity:
+                class: App\Entity\Patient
+                property: email
+
+        app_docteur_provider:
+            entity:
+                class: App\Entity\Docteur
+                property: email
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
                 class: App\Entity\User
                 property: email
+
+
+        # used to reload user from session & other features (e.g. switch_user)
+        # used to reload user from session & other features (e.g. switch_user)
 
     firewalls:
         dev:
@@ -22,7 +42,7 @@ security:
 
         login:
             pattern: ^/api/login
-            provider: app_user_provider
+            provider: app_users
             stateless: true
             anonymous: true
             json_login:
@@ -33,7 +53,7 @@ security:
         api:
             pattern:   ^/api
             stateless: true
-            provider: app_user_provider
+            provider: app_users
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
