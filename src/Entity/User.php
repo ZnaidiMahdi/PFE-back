@@ -6,6 +6,8 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -34,6 +36,70 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient" ,"docteur"})
+     */
+    private $nom;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient","docteur"})
+     */
+    private $prenom;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"patient","docteur"})
+     */
+    private $date_naissance;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient","docteur"})
+     */
+    private $num_tel;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient","docteur"})
+     */
+    private $ville;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient","docteur"})
+     */
+    private $adresse;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"patient","docteur"})
+     */
+    private $code_postal;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient","docteur"})
+     */
+    private $sexe;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient","docteur"})
+     */
+    private $photo;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Patient::class, inversedBy="user", cascade={"persist", "remove"})
+     */
+    private $patient;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Docteur::class, inversedBy="user", cascade={"persist", "remove"})
+     */
+    private $Docteur;
 
     public function getId(): ?int
     {
@@ -122,5 +188,137 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(?string $nom): self
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getPrenom(): ?string
+    {
+        return $this->prenom;
+    }
+
+    public function setPrenom(?string $prenom): self
+    {
+        $this->prenom = $prenom;
+
+        return $this;
+    }
+
+    public function getDateNaissance(): ?\DateTimeInterface
+    {
+        return $this->date_naissance;
+    }
+
+    public function setDateNaissance(?\DateTimeInterface $date_naissance): self
+    {
+        $this->date_naissance = $date_naissance;
+
+        return $this;
+    }
+
+    public function getNumTel(): ?string
+    {
+        return $this->num_tel;
+    }
+
+    public function setNumTel(?string $num_tel): self
+    {
+        $this->num_tel = $num_tel;
+
+        return $this;
+    }
+
+    public function getVille(): ?string
+    {
+        return $this->ville;
+    }
+
+    public function setVille(?string $ville): self
+    {
+        $this->ville = $ville;
+
+        return $this;
+    }
+
+    public function getAdresse(): ?string
+    {
+        return $this->adresse;
+    }
+
+    public function setAdresse(?string $adresse): self
+    {
+        $this->adresse = $adresse;
+
+        return $this;
+    }
+
+    public function getCodePostal(): ?int
+    {
+        return $this->code_postal;
+    }
+
+    public function setCodePostal(?int $code_postal): self
+    {
+        $this->code_postal = $code_postal;
+
+        return $this;
+    }
+
+    public function getSexe(): ?string
+    {
+        return $this->sexe;
+    }
+
+    public function setSexe(?string $sexe): self
+    {
+        $this->sexe = $sexe;
+
+        return $this;
+    }
+
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): self
+    {
+        $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function getPatient(): ?Patient
+    {
+        return $this->patient;
+    }
+
+    public function setPatient(?Patient $patient): self
+    {
+        $this->patient = $patient;
+
+        return $this;
+    }
+
+    public function getDocteur(): ?Docteur
+    {
+        return $this->Docteur;
+    }
+
+    public function setDocteur(?Docteur $Docteur): self
+    {
+        $this->Docteur = $Docteur;
+
+        return $this;
     }
 }

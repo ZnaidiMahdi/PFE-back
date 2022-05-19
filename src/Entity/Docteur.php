@@ -15,12 +15,14 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
+     * @Groups({"docteur"})
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups({"docteur"})
      */
     private $email;
 
@@ -34,6 +36,72 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"docteur"})
+     */
+    private $rpps;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"docteur"})
+     */
+    private $cin;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"docteur"})
+     */
+    private $email_professionnel;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"docteur"})
+     */
+    private $sepicialite;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"docteur"})
+     */
+    private $langues;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"docteur"})
+     */
+    private $nom_etab;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"docteur"})
+     */
+    private $num_etab;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"docteur"})
+     */
+    private $ville_etab;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"docteur"})
+     */
+    private $email_etab;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"docteur"})
+     */
+    private $adresse_etab;
+
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, mappedBy="Docteur", cascade={"persist", "remove"})
+     * @Groups({"docteur"})
+     */
+    private $user;
 
     public function getId(): ?int
     {
@@ -122,5 +190,147 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getRpps(): ?int
+    {
+        return $this->rpps;
+    }
+
+    public function setRpps(?int $rpps): self
+    {
+        $this->rpps = $rpps;
+
+        return $this;
+    }
+
+    public function getCin(): ?int
+    {
+        return $this->cin;
+    }
+
+    public function setCin(?int $cin): self
+    {
+        $this->cin = $cin;
+
+        return $this;
+    }
+
+    public function getEmailProfessionnel(): ?string
+    {
+        return $this->email_professionnel;
+    }
+
+    public function setEmailProfessionnel(?string $email_professionnel): self
+    {
+        $this->email_professionnel = $email_professionnel;
+
+        return $this;
+    }
+
+    public function getSepicialite(): ?string
+    {
+        return $this->sepicialite;
+    }
+
+    public function setSepicialite(?string $sepicialite): self
+    {
+        $this->sepicialite = $sepicialite;
+
+        return $this;
+    }
+
+    public function getLangues(): ?string
+    {
+        return $this->langues;
+    }
+
+    public function setLangues(?string $langues): self
+    {
+        $this->langues = $langues;
+
+        return $this;
+    }
+
+    public function getNomEtab(): ?string
+    {
+        return $this->nom_etab;
+    }
+
+    public function setNomEtab(?string $nom_etab): self
+    {
+        $this->nom_etab = $nom_etab;
+
+        return $this;
+    }
+
+    public function getNumEtab(): ?string
+    {
+        return $this->num_etab;
+    }
+
+    public function setNumEtab(?string $num_etab): self
+    {
+        $this->num_etab = $num_etab;
+
+        return $this;
+    }
+
+    public function getVilleEtab(): ?string
+    {
+        return $this->ville_etab;
+    }
+
+    public function setVilleEtab(?string $ville_etab): self
+    {
+        $this->ville_etab = $ville_etab;
+
+        return $this;
+    }
+
+    public function getEmailEtab(): ?string
+    {
+        return $this->email_etab;
+    }
+
+    public function setEmailEtab(?string $email_etab): self
+    {
+        $this->email_etab = $email_etab;
+
+        return $this;
+    }
+
+    public function getAdresseEtab(): ?string
+    {
+        return $this->adresse_etab;
+    }
+
+    public function setAdresseEtab(?string $adresse_etab): self
+    {
+        $this->adresse_etab = $adresse_etab;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($user === null && $this->user !== null) {
+            $this->user->setDocteur(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($user !== null && $user->getDocteur() !== $this) {
+            $user->setDocteur($this);
+        }
+
+        $this->user = $user;
+
+        return $this;
     }
 }
