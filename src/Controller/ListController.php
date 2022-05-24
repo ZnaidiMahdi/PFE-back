@@ -8,10 +8,11 @@ use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+
 class ListController extends AbstractFOSRestController
 {
     /**
-     * @Route("/api/list", name="app_lists")
+     * @Route("/api/list", name="app_lists", methods={"GET"})
      * @return View
      */
     public function getListAction(TestRepository $testRepository)
