@@ -39,55 +39,55 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient" ,"docteur"})
+     * @Groups({"patient" ,"docteur","experience"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","docteur"})
+     * @Groups({"patient","docteur","experience"})
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"patient","docteur"})
+     * @Groups({"patient","docteur","experience"})
      */
     private $date_naissance;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","docteur"})
+     * @Groups({"patient","docteur","experience"})
      */
     private $num_tel;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","docteur"})
+     * @Groups({"patient","docteur","experience"})
      */
     private $ville;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","docteur"})
+     * @Groups({"patient","docteur","experience"})
      */
     private $adresse;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"patient","docteur"})
+     * @Groups({"patient","docteur","experience"})
      */
     private $code_postal;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","docteur"})
+     * @Groups({"patient","docteur","experience"})
      */
     private $sexe;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","docteur"})
+     * @Groups({"patient","docteur","experience"})
      */
     private $photo;
 

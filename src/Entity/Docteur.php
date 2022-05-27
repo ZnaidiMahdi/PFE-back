@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\DocteurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -17,14 +19,14 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $email;
 
@@ -41,69 +43,79 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $rpps;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $cin;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $email_professionnel;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $sepicialite;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $langues;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $nom_etab;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $num_etab;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $ville_etab;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $email_etab;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $adresse_etab;
 
     /**
      * @ORM\OneToOne(targetEntity=User::class, mappedBy="Docteur", cascade={"persist", "remove"})
-     * @Groups({"docteur"})
+     * @Groups({"docteur","experience"})
      */
     private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Experience::class, mappedBy="docteur")
+     */
+    private $experiences;
+
+    public function __construct()
+    {
+        $this->experiences = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -332,6 +344,36 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Experience>
+     */
+    public function getExperiences(): Collection
+    {
+        return $this->experiences;
+    }
+
+    public function addExperience(Experience $experience): self
+    {
+        if (!$this->experiences->contains($experience)) {
+            $this->experiences[] = $experience;
+            $experience->setDocteurId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExperience(Experience $experience): self
+    {
+        if ($this->experiences->removeElement($experience)) {
+            // set the owning side to null (unless already changed)
+            if ($experience->getDocteur() === $this) {
+                $experience->setDocteur(null);
+            }
+        }
 
         return $this;
     }
