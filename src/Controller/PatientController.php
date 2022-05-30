@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Patient;
+use App\Entity\PatientsDocteurs;
 use App\Entity\User;
+use App\Repository\DocteurRepository;
 use App\Repository\PatientRepository;
+use App\Repository\PatientsDocteursRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Context\Context;
@@ -297,13 +300,17 @@ class PatientController extends AbstractFOSRestController
      *     @OA\Schema(type="integer")
      * )
      */
-    public function deletePatient(Request $request, PatientRepository $patientRepository)
+    public function deletePatient(Request $request, PatientRepository $patientRepository, PatientsDocteursRepository $patientsDocteursRepository)
     {
         $patient_id = $request->get('patient_id');
         $patient = $patientRepository->findOneBy(['id' => $patient_id]);
 
         if($patient){
             $user = $patient->getUser();
+            $patient_docteurs = $patientsDocteursRepository->findBy(['patient' => $patient_id]);
+            foreach ($patient_docteurs as $p){
+                $this->entityManager->remove($p);
+            }
             $this->entityManager->remove($user);
             $this->entityManager->remove($patient);
             $this->entityManager->flush();
@@ -444,6 +451,59 @@ class PatientController extends AbstractFOSRestController
             $this->entityManager->flush();
 
             return $this->view($patient, Response::HTTP_OK)->setContext((new Context())->setGroups(['patient']));
+        } else {
+            return $this->view('Ce patient n\'existe pas', Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    /**
+     * @OA\Tag(name="Patient")
+     * @Route("/api/affect/docteur", name="affect_docteur", methods={"POST"})
+     * @return View
+     * @throws Exception
+     * @OA\Response(
+     *     response=200,
+     *     description="Selectionner un docteur pour un patient ",
+     * )
+     * @OA\Parameter(
+     *     name="patient_id",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="docteur_id",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     * )
+     */
+    public function affectDocteur(Request $request, PatientRepository $patientRepository, DocteurRepository $docteurRepository)
+    {
+        $patient_id = $request->get('patient_id');
+        $patient = $patientRepository->findOneBy(['id' => $patient_id]);
+
+        $docteur_id = $request->get('docteur_id');
+        $docteur = $docteurRepository->findOneBy(['id' => $docteur_id]);
+
+        if($patient){
+
+            if($docteur){
+
+                $patient_docteur = new PatientsDocteurs();
+
+                $patient_docteur->setPatient($patient);
+                $patient_docteur->setDocteur($docteur);
+                $patient_docteur->setIsAccepted(0);
+
+                $this->entityManager->persist($patient_docteur);
+                $this->entityManager->flush();
+
+                return $this->view('Le docteur est affecté avec succès', Response::HTTP_OK);
+            } else {
+                return $this->view('Ce docteur n\'existe pas', Response::HTTP_NOT_FOUND);
+            }
+
         } else {
             return $this->view('Ce patient n\'existe pas', Response::HTTP_NOT_FOUND);
         }

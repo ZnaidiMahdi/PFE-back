@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PatientRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -103,6 +105,17 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
      * @Groups({"patient"})
      */
     private $glycemie;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PatientsDocteurs::class, mappedBy="patient")
+     */
+    private $docteurs;
+
+    public function __construct()
+    {
+        $this->docteurs = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -334,4 +347,35 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, PatientsDocteurs>
+     */
+    public function getDocteurs(): Collection
+    {
+        return $this->docteurs;
+    }
+
+    public function addDocteur(PatientsDocteurs $docteur): self
+    {
+        if (!$this->docteurs->contains($docteur)) {
+            $this->docteurs[] = $docteur;
+            $docteur->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDocteur(PatientsDocteurs $docteur): self
+    {
+        if ($this->docteurs->removeElement($docteur)) {
+            // set the owning side to null (unless already changed)
+            if ($docteur->getPatient() === $this) {
+                $docteur->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

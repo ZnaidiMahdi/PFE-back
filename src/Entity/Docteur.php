@@ -112,9 +112,16 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $experiences;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PatientsDocteurs::class, mappedBy="docteur_id")
+     */
+    private $patients;
+
+
     public function __construct()
     {
         $this->experiences = new ArrayCollection();
+        $this->patients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -360,7 +367,7 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->experiences->contains($experience)) {
             $this->experiences[] = $experience;
-            $experience->setDocteurId($this);
+            $experience->setDocteur($this);
         }
 
         return $this;
@@ -372,6 +379,36 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($experience->getDocteur() === $this) {
                 $experience->setDocteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Patient>
+     */
+    public function getPatients(): Collection
+    {
+        return $this->patients;
+    }
+
+    public function addPatient(PatientsDocteurs $patient): self
+    {
+        if (!$this->patients->contains($patient)) {
+            $this->patients[] = $patient;
+            $patient->setDocteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removePatient(PatientsDocteurs $patient): self
+    {
+        if ($this->patients->removeElement($patient)) {
+            // set the owning side to null (unless already changed)
+            if ($patient->getDocteur() === $this) {
+                $patient->setDocteur(null);
             }
         }
 

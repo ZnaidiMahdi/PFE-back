@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Docteur;
+use App\Entity\PatientsDocteurs;
 use App\Entity\User;
 use App\Repository\DocteurRepository;
+use App\Repository\PatientsDocteursRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -271,13 +273,17 @@ class DocteurController extends AbstractFOSRestController
      *     @OA\Schema(type="integer")
      * )
      */
-    public function deleteDocteur(Request $request, DocteurRepository $docteurRepository)
+    public function deleteDocteur(Request $request, DocteurRepository $docteurRepository, PatientsDocteursRepository $patientsDocteursRepository)
     {
 
         $docteur_id = $request->get('docteur_id');
         $docteur = $docteurRepository->findOneBy(['id' => $docteur_id]);
 
         if($docteur){
+            $patient_docteurs = $patientsDocteursRepository->findBy(['docteur' => $docteur_id]);
+            foreach ($patient_docteurs as $d){
+                $this->entityManager->remove($d);
+            }
             $user = $docteur->getUser();
             $this->entityManager->remove($user);
             $this->entityManager->remove($docteur);
@@ -468,6 +474,85 @@ class DocteurController extends AbstractFOSRestController
             return $this->view($docteur, Response::HTTP_OK)->setContext((new Context())->setGroups(['docteur']));
         } else {
             return $this->view('Ce docteur n\'existe pas', Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    /**
+     * @OA\Tag(name="Docteur")
+     * @Route("/api/accept/patient", name="accept_patient", methods={"PATCH"})
+     * @return View
+     * @throws Exception
+     * @OA\Response(
+     *     response=200,
+     *     description="Accepter un patient ",
+     * )
+     * @OA\Parameter(
+     *     name="docteur_id",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="patient_id",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     * )
+     */
+    public function accepterPatient(Request $request, PatientsDocteursRepository $patientsDocteursRepository)
+    {
+
+        $docteur_id = $request->get('docteur_id');
+        $patient_id = $request->get('patient_id');
+        $patient_docteur = $patientsDocteursRepository->findOneBy(['docteur' => $docteur_id, 'patient'=> $patient_id]);
+
+        if($patient_docteur){
+            $patient_docteur->setIsAccepted(1);
+            $this->entityManager->persist($patient_docteur);
+            $this->entityManager->flush();
+
+            return $this->view('Le patient est accepté avec succès', Response::HTTP_OK);
+        } else {
+            return $this->view('l\'identifiant du docteur ou du patient n\'existe pas', Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    /**
+     * @OA\Tag(name="Docteur")
+     * @Route("/api/refus/patient", name="refus_patient", methods={"PATCH"})
+     * @return View
+     * @throws Exception
+     * @OA\Response(
+     *     response=200,
+     *     description="Refuser un patient ",
+     * )
+     * @OA\Parameter(
+     *     name="docteur_id",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="patient_id",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     * )
+     */
+    public function refusPatient(Request $request, PatientsDocteursRepository $patientsDocteursRepository)
+    {
+
+        $docteur_id = $request->get('docteur_id');
+        $patient_id = $request->get('patient_id');
+        $patient_docteur = $patientsDocteursRepository->findOneBy(['docteur' => $docteur_id, 'patient'=> $patient_id]);
+
+        if($patient_docteur){
+            $this->entityManager->remove($patient_docteur);
+            $this->entityManager->flush();
+
+            return $this->view('Le patient est refusé par le docteur', Response::HTTP_OK);
+        } else {
+            return $this->view('l\'identifiant du docteur ou du patient n\'existe pas', Response::HTTP_NOT_FOUND);
         }
     }
 }
