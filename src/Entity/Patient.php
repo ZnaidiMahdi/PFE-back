@@ -18,14 +18,14 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement"})
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement"})
      */
     private $email;
 
@@ -48,13 +48,13 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement"})
      */
     private $code_securite_sociale;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement"})
      */
     private $profession;
 
@@ -66,43 +66,43 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement"})
      */
     private $nbr_enfant;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement"})
      */
     private $poids;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement"})
      */
     private $taille;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement"})
      */
     private $temperature;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement"})
      */
     private $frequence_cardiaque;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement"})
      */
     private $tension_arterielle;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement"})
      */
     private $glycemie;
 
@@ -111,9 +111,15 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $docteurs;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Traitement::class, mappedBy="patient")
+     */
+    private $traitements;
+
     public function __construct()
     {
         $this->docteurs = new ArrayCollection();
+        $this->traitements = new ArrayCollection();
     }
 
 
@@ -372,6 +378,36 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($docteur->getPatient() === $this) {
                 $docteur->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Traitement>
+     */
+    public function getTraitements(): Collection
+    {
+        return $this->traitements;
+    }
+
+    public function addTraitement(Traitement $traitement): self
+    {
+        if (!$this->traitements->contains($traitement)) {
+            $this->traitements[] = $traitement;
+            $traitement->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTraitement(Traitement $traitement): self
+    {
+        if ($this->traitements->removeElement($traitement)) {
+            // set the owning side to null (unless already changed)
+            if ($traitement->getPatient() === $this) {
+                $traitement->setPatient(null);
             }
         }
 
