@@ -238,17 +238,17 @@ class DocteurController extends AbstractFOSRestController
      *     description="Informations profile docteur ",
      * )
      * @OA\Parameter(
-     *     name="docteur_id",
+     *     name="username",
      *     in="query",
      *     required=true,
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="string")
      * )
      */
     public function getProfileDocteur(Request $request, DocteurRepository $docteurRepository)
     {
         
-        $docteur_id = $request->get('docteur_id');
-        $docteur = $docteurRepository->findOneBy(['id' => $docteur_id]);
+        $email = $request->get('username');
+        $docteur = $docteurRepository->findOneBy(['email' => $email]);
 
         if($docteur){
             return $this->view($docteur, Response::HTTP_OK)->setContext((new Context())->setGroups(['docteur']));
