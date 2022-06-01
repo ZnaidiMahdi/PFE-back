@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Traitement;
+use App\Entity\Hospitalisation;
+use App\Repository\HospitalisationRepository;
 use App\Repository\PatientRepository;
-use App\Repository\TraitementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
 
 
-class TraitementController extends AbstractFOSRestController
+class HospitalisationController extends AbstractFOSRestController
 {
     /**
      * @var EntityManagerInterface
@@ -27,11 +27,11 @@ class TraitementController extends AbstractFOSRestController
         $this->entityManager = $entityManager;
     }
     /**
-     * @OA\Tag(name="Traitement")
-     * @Route("/api/ajout/traitement", name="ajout_traitement", methods={"POST"})
+     * @OA\Tag(name="Hospitalisation")
+     * @Route("/api/ajout/hospitalisation", name="ajout_hospitalisation", methods={"POST"})
      * @OA\Response(
      *     response=200,
-     *     description="Ajout un traitement pour un patient",
+     *     description="Ajout une hospitalisation pour un patient",
      * )
      * @OA\Parameter(
      *     name="patient_id",
@@ -40,14 +40,19 @@ class TraitementController extends AbstractFOSRestController
      *     @OA\Schema(type="integer")
      * )
      * @OA\Parameter(
-     *     name="nom",
+     *     name="motif",
      *     in="query",
      *     @OA\Schema(type="string")
      * )
      * @OA\Parameter(
-     *     name="postologie_trait",
+     *     name="duree",
      *     in="query",
-     *     @OA\Schema(type="string")
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="heure",
+     *     in="query",
+     *     @OA\Schema(type="integer")
      * )
      * @OA\Parameter(
      *     name="commentaire",
@@ -55,7 +60,7 @@ class TraitementController extends AbstractFOSRestController
      *     @OA\Schema(type="string")
      * )
      * @OA\Parameter(
-     *     name="date_trait",
+     *     name="date_debut",
      *     in="query",
      *     example="20-02-2000",
      *     @OA\Schema(type="datetime")
@@ -63,41 +68,43 @@ class TraitementController extends AbstractFOSRestController
      * @return View
      * @throws \Exception
      */
-    public function ajoutExperience(Request $request, TraitementRepository $traitementRepository, PatientRepository $patientRepository)
+    public function ajoutHospitalisation(Request $request, PatientRepository $patientRepository)
     {
         $patient_id = $request->get('patient_id');
-        $nom = $request->get('nom');
-        $postologie_trait = $request->get('postologie_trait');
+        $motif = $request->get('motif');
+        $duree = $request->get('duree');
+        $heure = $request->get('heure');
         $commentaire = $request->get('commentaire');
-        $date_trait = $request->get('date_trait');
+        $date_debut = $request->get('date_debut');
         $patient = $patientRepository->findOneBy(['id' => $patient_id]);
 
         if ($patient) {
 
-            $traitement = new Traitement();
+            $hospitalisation = new Hospitalisation();
 
-            $traitement->setNom($nom);
-            $traitement->setPosologieTrait($postologie_trait);
-            $traitement->setCommentaire($commentaire);
-            $traitement->setDateTrait(new \DateTime($date_trait));
-            $traitement->setPatient($patient);
+            $hospitalisation->setMotif($motif);
+            $hospitalisation->setDuree($duree);
+            $hospitalisation->setHeure($heure);
+            $hospitalisation->setDateDebut(new \DateTime($date_debut));
+            $hospitalisation->setCommentaire($commentaire);
+            $hospitalisation->setPatient($patient);
 
-            $this->entityManager->persist($traitement);
+            $this->entityManager->persist($hospitalisation);
             $this->entityManager->flush();
 
-            return $this->view($traitement, Response::HTTP_OK)->setContext((new Context())->setGroups(['traitement']));
+            return $this->view($hospitalisation, Response::HTTP_OK)->setContext((new Context())->setGroups(['hospitalisation']));
         } else {
             return $this->view('le patient n\'existe pas', Response::HTTP_NOT_FOUND);
         }
     }
 
     /**
-     * @OA\Tag(name="Traitement")
-     * @Route("/api/list/traitements", name="list_traitements", methods={"POST"})
+     * @OA\Tag(name="Hospitalisation")
+     * @Route("/api/list/hospitalisation", name="list_hospitalisations", methods={"POST"})
      * @return View
      * @OA\Response(
      *     response=200,
-     *     description="list des traitements pour un patient",
+     *     description="list des hospitalisations pour un patient",
      * )
      * @OA\Parameter(
      *     name="patient_id",
@@ -106,15 +113,15 @@ class TraitementController extends AbstractFOSRestController
      *     @OA\Schema(type="integer")
      * )
      */
-    public function listTraitements(Request $request, TraitementRepository $traitementRepository, PatientRepository $patientRepository)
+    public function listHospitalisations(Request $request, HospitalisationRepository $hospitalisationRepository, PatientRepository $patientRepository)
     {
 
         $patient_id = $request->get('patient_id');
         $patient = $patientRepository->findOneBy(['id' => $patient_id]);
 
         if ($patient) {
-            $traitements = $traitementRepository->findBy(['patient' => $patient_id]);
-            return $this->view($traitements, Response::HTTP_OK)->setContext((new Context())->setGroups(['traitement']));
+            $hospitalisations = $hospitalisationRepository->findBy(['patient' => $patient_id]);
+            return $this->view($hospitalisations, Response::HTTP_OK)->setContext((new Context())->setGroups(['hospitalisation']));
         } else {
             return $this->view('Le patient n\'existe pas', Response::HTTP_NOT_FOUND);
         }

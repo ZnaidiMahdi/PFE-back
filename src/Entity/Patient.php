@@ -18,14 +18,14 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @Groups({"patient","traitement"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"patient","traitement"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $email;
 
@@ -48,61 +48,61 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $code_securite_sociale;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $profession;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $statut_sociale;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $nbr_enfant;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $poids;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $taille;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $temperature;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $frequence_cardiaque;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $tension_arterielle;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement"})
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $glycemie;
 
@@ -116,10 +116,28 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $traitements;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Hospitalisation::class, mappedBy="patient")
+     */
+    private $hospitalisations;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Maladie::class, mappedBy="patient")
+     */
+    private $maladies;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Vaccination::class, mappedBy="patient")
+     */
+    private $vaccinations;
+
     public function __construct()
     {
         $this->docteurs = new ArrayCollection();
         $this->traitements = new ArrayCollection();
+        $this->hospitalisations = new ArrayCollection();
+        $this->maladies = new ArrayCollection();
+        $this->vaccinations = new ArrayCollection();
     }
 
 
@@ -408,6 +426,96 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($traitement->getPatient() === $this) {
                 $traitement->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Hospitalisation>
+     */
+    public function getHospitalisations(): Collection
+    {
+        return $this->hospitalisations;
+    }
+
+    public function addHospitalisation(Hospitalisation $hospitalisation): self
+    {
+        if (!$this->hospitalisations->contains($hospitalisation)) {
+            $this->hospitalisations[] = $hospitalisation;
+            $hospitalisation->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHospitalisation(Hospitalisation $hospitalisation): self
+    {
+        if ($this->hospitalisations->removeElement($hospitalisation)) {
+            // set the owning side to null (unless already changed)
+            if ($hospitalisation->getPatient() === $this) {
+                $hospitalisation->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Maladie>
+     */
+    public function getMaladies(): Collection
+    {
+        return $this->maladies;
+    }
+
+    public function addMalady(Maladie $malady): self
+    {
+        if (!$this->maladies->contains($malady)) {
+            $this->maladies[] = $malady;
+            $malady->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMalady(Maladie $malady): self
+    {
+        if ($this->maladies->removeElement($malady)) {
+            // set the owning side to null (unless already changed)
+            if ($malady->getPatient() === $this) {
+                $malady->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vaccination>
+     */
+    public function getVaccinations(): Collection
+    {
+        return $this->vaccinations;
+    }
+
+    public function addVaccination(Vaccination $vaccination): self
+    {
+        if (!$this->vaccinations->contains($vaccination)) {
+            $this->vaccinations[] = $vaccination;
+            $vaccination->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVaccination(Vaccination $vaccination): self
+    {
+        if ($this->vaccinations->removeElement($vaccination)) {
+            // set the owning side to null (unless already changed)
+            if ($vaccination->getPatient() === $this) {
+                $vaccination->setPatient(null);
             }
         }
 
