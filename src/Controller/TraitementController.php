@@ -34,10 +34,10 @@ class TraitementController extends AbstractFOSRestController
      *     description="Ajout un traitement pour un patient",
      * )
      * @OA\Parameter(
-     *     name="patient_id",
+     *     name="username",
      *     in="query",
      *     required=true,
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="string")
      * )
      * @OA\Parameter(
      *     name="nom",
@@ -63,14 +63,14 @@ class TraitementController extends AbstractFOSRestController
      * @return View
      * @throws \Exception
      */
-    public function ajoutExperience(Request $request, TraitementRepository $traitementRepository, PatientRepository $patientRepository)
+    public function ajoutTraitement(Request $request, TraitementRepository $traitementRepository, PatientRepository $patientRepository)
     {
-        $patient_id = $request->get('patient_id');
+        $email = $request->get('username');
         $nom = $request->get('nom');
         $postologie_trait = $request->get('postologie_trait');
         $commentaire = $request->get('commentaire');
         $date_trait = $request->get('date_trait');
-        $patient = $patientRepository->findOneBy(['id' => $patient_id]);
+        $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if ($patient) {
 
