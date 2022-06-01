@@ -265,17 +265,17 @@ class PatientController extends AbstractFOSRestController
      *     description="Informations profile patient ",
      * )
      * @OA\Parameter(
-     *     name="patient_id",
+     *     name="username",
      *     in="query",
      *     required=true,
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="string")
      * )
      */
     public function getProfilePatient(Request $request, PatientRepository $patientRepository)
     {
 
-        $patient_id = $request->get('patient_id');
-        $patient = $patientRepository->findOneBy(['id' => $patient_id]);
+        $email = $request->get('username');
+        $patient = $patientRepository->findOneBy(['username' => $email]);
 
         if($patient){
             return $this->view($patient, Response::HTTP_OK)->setContext((new Context())->setGroups(['patient']));
