@@ -275,7 +275,7 @@ class PatientController extends AbstractFOSRestController
     {
 
         $email = $request->get('username');
-        $patient = $patientRepository->findOneBy(['username' => $email]);
+        $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if($patient){
             return $this->view($patient, Response::HTTP_OK)->setContext((new Context())->setGroups(['patient']));
