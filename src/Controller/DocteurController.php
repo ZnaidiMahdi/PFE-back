@@ -245,7 +245,7 @@ class DocteurController extends AbstractFOSRestController
      */
     public function getProfileDocteur(Request $request, DocteurRepository $docteurRepository)
     {
-        
+
         $email = $request->get('username');
         $docteur = $docteurRepository->findOneBy(['email' => $email]);
 
@@ -554,4 +554,23 @@ class DocteurController extends AbstractFOSRestController
             return $this->view('l\'identifiant du docteur ou du patient n\'existe pas', Response::HTTP_NOT_FOUND);
         }
     }
+
+
+
+    /**
+     * @OA\Tag(name="Docteur")
+     * @Route("/api/list/docteurs", name="list_docteurs", methods={"GET"})
+     * @return View
+     * @throws Exception
+     * @OA\Response(
+     *     response=200,
+     *     description="list des docteurs",
+     * )
+     **/
+    public function listDocteurs(DocteurRepository $docteurRepository)
+    {;
+        $docteurs = $docteurRepository->findAll();
+        return $this->view($docteurs, Response::HTTP_OK);
+    }
+
 }
