@@ -116,7 +116,7 @@ class ExperienceController extends AbstractFOSRestController
 
     /**
      * @OA\Tag(name="Experience")
-     * @Route("/api/delete/experience", name="delete_experience", methods={"DELETE"})
+     * @Route("/api/delete/experience", name="delete_experience", methods={"POST"})
      * @return View
      * @OA\Response(
      *     response=200,
@@ -129,7 +129,7 @@ class ExperienceController extends AbstractFOSRestController
      *     @OA\Schema(type="integer")
      * )
      */
-    public function deletePatient(Request $request, ExperienceRepository $experienceRepository)
+    public function deleteExperience(Request $request, ExperienceRepository $experienceRepository)
     {
         $experience_id = $request->get('experience_id');
         $experience = $experienceRepository->findOneBy(['id' => $experience_id]);
