@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\QuestionReponseRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=QuestionReponseRepository::class)
@@ -13,37 +14,44 @@ class QuestionReponse
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
+     * @Groups({"question_reponse" })
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"question_reponse" })
      */
     private $titre;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"question_reponse" })
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"question_reponse" })
      */
     private $question;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"question_reponse" })
      */
     private $reponse;
 
     /**
      * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="questionReponses")
+     * @Groups({"question_reponse" })
      */
     private $patient;
 
     /**
      * @ORM\ManyToOne(targetEntity=dOCTEUR::class, inversedBy="questionReponses")
+     * @Groups({"question_reponse" })
      */
     private $docteur;
 

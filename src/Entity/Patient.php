@@ -18,14 +18,14 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      */
     private $email;
 
@@ -48,25 +48,25 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      */
     private $code_securite_sociale;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      */
     private $profession;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      */
     private $statut_sociale;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      */
     private $nbr_enfant;
 
@@ -90,7 +90,7 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination"})
      */
     private $frequence_cardiaque;
 
