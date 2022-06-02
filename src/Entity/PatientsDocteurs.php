@@ -26,7 +26,7 @@ class PatientsDocteurs
     private $is_accepted;
 
     /**
-     * @ORM\ManyToOne(targetEntity=docteur::class, inversedBy="patients")
+     * @ORM\ManyToOne(targetEntity=Docteur::class, inversedBy="patients")
      */
     private $docteur;
 

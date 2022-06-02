@@ -113,7 +113,7 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
     private $experiences;
 
     /**
-     * @ORM\OneToMany(targetEntity=PatientsDocteurs::class, mappedBy="docteur_id")
+     * @ORM\OneToMany(targetEntity=PatientsDocteurs::class, mappedBy="docteur")
      */
     private $patients;
 
