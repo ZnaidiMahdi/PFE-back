@@ -100,20 +100,20 @@ class TraitementController extends AbstractFOSRestController
      *     description="list des traitements pour un patient",
      * )
      * @OA\Parameter(
-     *     name="patient_id",
+     *     name="username",
      *     in="query",
      *     required=true,
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="string")
      * )
      */
     public function listTraitements(Request $request, TraitementRepository $traitementRepository, PatientRepository $patientRepository)
     {
 
-        $patient_id = $request->get('patient_id');
-        $patient = $patientRepository->findOneBy(['id' => $patient_id]);
+        $email = $request->get('username');
+        $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if ($patient) {
-            $traitements = $traitementRepository->findBy(['patient' => $patient_id]);
+            $traitements = $traitementRepository->findBy(['patient' => $patient->getId()]);
             return $this->view($traitements, Response::HTTP_OK)->setContext((new Context())->setGroups(['traitement']));
         } else {
             return $this->view('Le patient n\'existe pas', Response::HTTP_NOT_FOUND);

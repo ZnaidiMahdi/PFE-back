@@ -34,10 +34,10 @@ class HospitalisationController extends AbstractFOSRestController
      *     description="Ajout une hospitalisation pour un patient",
      * )
      * @OA\Parameter(
-     *     name="patient_id",
+     *     name="username",
      *     in="query",
      *     required=true,
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="string")
      * )
      * @OA\Parameter(
      *     name="motif",
@@ -70,13 +70,13 @@ class HospitalisationController extends AbstractFOSRestController
      */
     public function ajoutHospitalisation(Request $request, PatientRepository $patientRepository)
     {
-        $patient_id = $request->get('patient_id');
+        $email = $request->get('username');
         $motif = $request->get('motif');
         $duree = $request->get('duree');
         $heure = $request->get('heure');
         $commentaire = $request->get('commentaire');
         $date_debut = $request->get('date_debut');
-        $patient = $patientRepository->findOneBy(['id' => $patient_id]);
+        $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if ($patient) {
 
@@ -107,20 +107,20 @@ class HospitalisationController extends AbstractFOSRestController
      *     description="list des hospitalisations pour un patient",
      * )
      * @OA\Parameter(
-     *     name="patient_id",
+     *     name="username",
      *     in="query",
      *     required=true,
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="string")
      * )
      */
     public function listHospitalisations(Request $request, HospitalisationRepository $hospitalisationRepository, PatientRepository $patientRepository)
     {
 
-        $patient_id = $request->get('patient_id');
-        $patient = $patientRepository->findOneBy(['id' => $patient_id]);
+        $email = $request->get('username');
+        $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if ($patient) {
-            $hospitalisations = $hospitalisationRepository->findBy(['patient' => $patient_id]);
+            $hospitalisations = $hospitalisationRepository->findBy(['patient' => $patient->getId()]);
             return $this->view($hospitalisations, Response::HTTP_OK)->setContext((new Context())->setGroups(['hospitalisation']));
         } else {
             return $this->view('Le patient n\'existe pas', Response::HTTP_NOT_FOUND);
