@@ -189,7 +189,7 @@ class DocteurController extends AbstractFOSRestController
 
             $user->setEmail($email);
             $user->setPassword($this->passwordEncoder->encodePassword($user, $password));
-            $user->setRoles(["ROLE_PATIENT"]);
+            $user->setRoles(["ROLE_DOCTEUR"]);
             $user->setNom($nom);
             $user->setPrenom($prenom);
             $user->setDateNaissance(new \DateTime($date_naissance));
@@ -229,7 +229,7 @@ class DocteurController extends AbstractFOSRestController
 
     /**
      * @OA\Tag(name="Docteur")
-     * @Route("/api/profile/docteur", name="profile_docteur", methods={"GET"})
+     * @Route("/api/profile/docteur", name="profile_docteur", methods={"POST"})
      * @return View
      * @throws Exception
      * @OA\Response(
