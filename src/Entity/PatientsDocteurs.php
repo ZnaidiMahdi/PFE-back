@@ -31,7 +31,7 @@ class PatientsDocteurs
     private $docteur;
 
     /**
-     * @ORM\ManyToOne(targetEntity=patient::class, inversedBy="docteurs")
+     * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="docteurs")
      */
     private $patient;
 

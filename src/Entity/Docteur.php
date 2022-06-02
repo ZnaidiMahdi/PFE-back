@@ -117,11 +117,17 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $patients;
 
+    /**
+     * @ORM\OneToMany(targetEntity=QuestionReponse::class, mappedBy="docteur")
+     */
+    private $questionReponses;
+
 
     public function __construct()
     {
         $this->experiences = new ArrayCollection();
         $this->patients = new ArrayCollection();
+        $this->questionReponses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -409,6 +415,36 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($patient->getDocteur() === $this) {
                 $patient->setDocteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, QuestionReponse>
+     */
+    public function getQuestionReponses(): Collection
+    {
+        return $this->questionReponses;
+    }
+
+    public function addQuestionReponse(QuestionReponse $questionReponse): self
+    {
+        if (!$this->questionReponses->contains($questionReponse)) {
+            $this->questionReponses[] = $questionReponse;
+            $questionReponse->setDocteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuestionReponse(QuestionReponse $questionReponse): self
+    {
+        if ($this->questionReponses->removeElement($questionReponse)) {
+            // set the owning side to null (unless already changed)
+            if ($questionReponse->getDocteur() === $this) {
+                $questionReponse->setDocteur(null);
             }
         }
 

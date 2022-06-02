@@ -39,7 +39,7 @@ class Maladie
     private $commentaire;
 
     /**
-     * @ORM\ManyToOne(targetEntity=patient::class, inversedBy="maladies")
+     * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="maladies")
      * @Groups({"maladie"})
      */
     private $patient;

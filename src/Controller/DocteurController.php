@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Docteur;
-use App\Entity\PatientsDocteurs;
 use App\Entity\User;
 use App\Repository\DocteurRepository;
 use App\Repository\PatientsDocteursRepository;

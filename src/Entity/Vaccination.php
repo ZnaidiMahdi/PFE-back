@@ -57,7 +57,7 @@ class Vaccination
     private $commentaire;
 
     /**
-     * @ORM\ManyToOne(targetEntity=patient::class, inversedBy="vaccinations")
+     * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="vaccinations")
      * @Groups({"vaccination"})
      */
     private $patient;

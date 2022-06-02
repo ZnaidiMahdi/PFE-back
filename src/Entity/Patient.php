@@ -131,6 +131,11 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $vaccinations;
 
+    /**
+     * @ORM\OneToMany(targetEntity=QuestionReponse::class, mappedBy="patient")
+     */
+    private $questionReponses;
+
     public function __construct()
     {
         $this->docteurs = new ArrayCollection();
@@ -138,6 +143,7 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
         $this->hospitalisations = new ArrayCollection();
         $this->maladies = new ArrayCollection();
         $this->vaccinations = new ArrayCollection();
+        $this->questionReponses = new ArrayCollection();
     }
 
 
@@ -516,6 +522,36 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($vaccination->getPatient() === $this) {
                 $vaccination->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, QuestionReponse>
+     */
+    public function getQuestionReponses(): Collection
+    {
+        return $this->questionReponses;
+    }
+
+    public function addQuestionReponse(QuestionReponse $questionReponse): self
+    {
+        if (!$this->questionReponses->contains($questionReponse)) {
+            $this->questionReponses[] = $questionReponse;
+            $questionReponse->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuestionReponse(QuestionReponse $questionReponse): self
+    {
+        if ($this->questionReponses->removeElement($questionReponse)) {
+            // set the owning side to null (unless already changed)
+            if ($questionReponse->getPatient() === $this) {
+                $questionReponse->setPatient(null);
             }
         }
 

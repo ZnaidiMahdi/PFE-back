@@ -1,0 +1,15 @@
+#swiftmailer:
+#    url: '%env(MAILER_URL)%'
+#    spool: { type: 'memory' }
+#
+#
+
+swiftmailer:
+    transport: gmail
+    auth_mode: login
+    port: 465
+    host: smtp.gmail.com
+    username: 'espacenumeriquedesante@gmail.com'
+    password: 'ridzfsarryypsfjz'
+
+
