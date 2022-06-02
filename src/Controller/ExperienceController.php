@@ -35,10 +35,10 @@ class ExperienceController extends AbstractFOSRestController
      *     description="Ajout d'une experience pour un docteur",
      * )
      * @OA\Parameter(
-     *     name="docteur_id",
+     *     name="username",
      *     in="query",
      *     required=true,
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="string")
      * )
      * @OA\Parameter(
      *     name="hopital",
@@ -61,8 +61,8 @@ class ExperienceController extends AbstractFOSRestController
      */
     public function ajoutExperience(Request $request, ExperienceRepository $experienceRepository, DocteurRepository $docteurRepository)
     {
-        $docteur_id = $request->get('docteur_id');
-        $docteur = $docteurRepository->findOneBy(['id' => $docteur_id]);
+        $username = $request->get('username');
+        $docteur = $docteurRepository->findOneBy(['email' => $username]);
 
         if ($docteur) {
             $date = $request->get('date');
@@ -94,7 +94,7 @@ class ExperienceController extends AbstractFOSRestController
      *     description="list des experiences pour un docteur",
      * )
      * @OA\Parameter(
-     *     name="docteur_id",
+     *     name="username",
      *     in="query",
      *     required=true,
      *     @OA\Schema(type="integer")
@@ -103,11 +103,11 @@ class ExperienceController extends AbstractFOSRestController
     public function listExperiences(Request $request, ExperienceRepository $experienceRepository, DocteurRepository $docteurRepository)
     {
 
-        $docteur_id = $request->get('docteur_id');
-        $docteur = $docteurRepository->findOneBy(['id' => $docteur_id]);
+        $username = $request->get('username');
+        $docteur = $docteurRepository->findOneBy(['email' => $username]);
 
         if ($docteur) {
-            $experiences = $experienceRepository->findBy(['docteur' => $docteur_id]);
+            $experiences = $experienceRepository->findBy(['docteur' => $docteur->getId()]);
             return $this->view($experiences, Response::HTTP_OK)->setContext((new Context())->setGroups(['experience']));
         } else {
             return $this->view('docteur n\'existe pas', Response::HTTP_NOT_FOUND);
