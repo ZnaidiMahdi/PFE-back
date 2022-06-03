@@ -136,6 +136,11 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $questionReponses;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Consultation::class, mappedBy="patient")
+     */
+    private $consultations;
+
     public function __construct()
     {
         $this->docteurs = new ArrayCollection();
@@ -144,6 +149,7 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
         $this->maladies = new ArrayCollection();
         $this->vaccinations = new ArrayCollection();
         $this->questionReponses = new ArrayCollection();
+        $this->consultations = new ArrayCollection();
     }
 
 
@@ -552,6 +558,36 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($questionReponse->getPatient() === $this) {
                 $questionReponse->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Consultation>
+     */
+    public function getConsultations(): Collection
+    {
+        return $this->consultations;
+    }
+
+    public function addConsultation(Consultation $consultation): self
+    {
+        if (!$this->consultations->contains($consultation)) {
+            $this->consultations[] = $consultation;
+            $consultation->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConsultation(Consultation $consultation): self
+    {
+        if ($this->consultations->removeElement($consultation)) {
+            // set the owning side to null (unless already changed)
+            if ($consultation->getPatient() === $this) {
+                $consultation->setPatient(null);
             }
         }
 
