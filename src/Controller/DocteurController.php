@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\DocteurRepository;
 use App\Repository\PatientsDocteursRepository;
 use App\Repository\UserRepository;
+use App\Services\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use FOS\RestBundle\Context\Context;
@@ -154,7 +155,7 @@ class DocteurController extends AbstractFOSRestController
      * @return View
      * @throws Exception
      */
-    public function registreDocteur(Request $request, UserRepository $userRepository)
+    public function registreDocteur(Request $request, UserRepository $userRepository, FileUploader $fileUploader)
     {
         $list_emails = $userRepository->listEmails();
         $email = $request->get('email');
@@ -173,7 +174,6 @@ class DocteurController extends AbstractFOSRestController
             $adresse = $request->get('adresse');
             $code_postal = $request->get('code_postal');
             $sexe = $request->get('sexe');
-            $photo = $request->get('photo');
             $rpps = $request->get('rpps');
             $cin = $request->get('cin');
             $email_professionnel = $request->get('email_professionnel');
@@ -184,6 +184,9 @@ class DocteurController extends AbstractFOSRestController
             $ville_etab = $request->get('ville_etab');
             $email_etab = $request->get('email_etab');
             $adresse_etab = $request->get('adresse_etab');
+
+            $files = $fileUploader->upload($request);
+            $photo = $files['photo'];
 
             $user = new User();
 

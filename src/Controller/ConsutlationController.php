@@ -6,6 +6,7 @@ use App\Entity\Consultation;
 use App\Repository\ConsultationRepository;
 use App\Repository\DocteurRepository;
 use App\Repository\PatientRepository;
+use App\Services\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
@@ -29,7 +30,7 @@ class ConsutlationController extends AbstractFOSRestController
 
     /**
      * @OA\Tag(name="Consultation")
-     * @Route("/api/ajout/consultation", name="ajout_consultation", methods={"PATCH"})
+     * @Route("/api/ajout/consultation", name="ajout_consultation", methods={"POST"})
      * @OA\Response(
      *     response=200,
      *     description="ajouter une consultation",
@@ -62,7 +63,7 @@ class ConsutlationController extends AbstractFOSRestController
      *     @OA\Schema(type="string")
      * )
      */
-    public function ajoutConsultation(Request $request, ConsultationRepository $consultationRepository, DocteurRepository $docteurRepository, PatientRepository $patientRepository)
+    public function ajoutConsultation(Request $request, DocteurRepository $docteurRepository, PatientRepository $patientRepository, FileUploader $fileUploader)
     {
 
         $email = $request->get('username');
@@ -71,7 +72,9 @@ class ConsutlationController extends AbstractFOSRestController
         $patient = $patientRepository->findOneBy(['email' => $email_patient]);
         $titre = $request->get('titre');
         $diagnostic = $request->get('diagnostic');
-        $document = $request->get('document');
+
+        $files = $fileUploader->upload($request);
+        $document = $files['document'];
 
         if(!$docteur){
             return $this->view('l\'identifiant du patient ou du patient n\'existe pas', Response::HTTP_NOT_FOUND);
