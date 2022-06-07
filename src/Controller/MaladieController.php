@@ -28,13 +28,13 @@ class MaladieController extends AbstractFOSRestController
     }
     /**
      * @OA\Tag(name="Maladie")
-     * @Route("/api/ajout/maladie", name="ajout_maladiet", methods={"POST"})
+     * @Route("/api/ajout/maladie", name="ajout_maladie", methods={"POST"})
      * @OA\Response(
      *     response=200,
      *     description="Ajout une maladie pour un patient",
      * )
      * @OA\Parameter(
-     *     name="patient_id",
+     *     name="username",
      *     in="query",
      *     required=true,
      *     @OA\Schema(type="integer")
@@ -60,11 +60,11 @@ class MaladieController extends AbstractFOSRestController
      */
     public function ajoutMaladie(Request $request, TraitementRepository $traitementRepository, PatientRepository $patientRepository)
     {
-        $patient_id = $request->get('patient_id');
+        $email = $request->get('username');
         $nom = $request->get('nom');
         $commentaire = $request->get('commentaire');
         $date_debut = $request->get('date_debut');
-        $patient = $patientRepository->findOneBy(['id' => $patient_id]);
+        $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if ($patient) {
 
@@ -93,7 +93,7 @@ class MaladieController extends AbstractFOSRestController
      *     description="list des maladies pour un patient",
      * )
      * @OA\Parameter(
-     *     name="patient_id",
+     *     name="username",
      *     in="query",
      *     required=true,
      *     @OA\Schema(type="integer")
@@ -102,14 +102,14 @@ class MaladieController extends AbstractFOSRestController
     public function listMaladies(Request $request, MaladieRepository $maladieRepository, PatientRepository $patientRepository)
     {
 
-        $patient_id = $request->get('patient_id');
-        $patient = $patientRepository->findOneBy(['id' => $patient_id]);
+        $email = $request->get('username');
+        $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if ($patient) {
-            $maladies = $maladieRepository->findBy(['patient' => $patient_id]);
+            $maladies = $maladieRepository->findBy(['patient' => $patient->getId()]);
             return $this->view($maladies, Response::HTTP_OK)->setContext((new Context())->setGroups(['maladie']));
         } else {
-            return $this->view('Le patient n\'existe pas', Response::HTTP_NOT_FOUND);
+            return $this->view('Le patient n\'existe pas', Response::HTTP_OK);
         }
     }
 }

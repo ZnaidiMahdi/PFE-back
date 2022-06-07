@@ -34,7 +34,7 @@ class VaccinationController extends AbstractFOSRestController
      *     description="Ajout une vaccination pour un patient",
      * )
      * @OA\Parameter(
-     *     name="patient_id",
+     *     name="username",
      *     in="query",
      *     required=true,
      *     @OA\Schema(type="integer")
@@ -75,14 +75,14 @@ class VaccinationController extends AbstractFOSRestController
      */
     public function ajoutVaccination(Request $request, VaccinationRepository $vaccinationRepository, PatientRepository $patientRepository)
     {
-        $patient_id = $request->get('patient_id');
+        $email = $request->get('username');
         $nom = $request->get('nom');
         $type = $request->get('type');
         $lot_vaccination = $request->get('lot_vaccination');
         $nom_vaccinateur = $request->get('nom_vaccinateur');
         $commentaire = $request->get('commentaire');
         $date_vaccination = $request->get('date_vaccination');
-        $patient = $patientRepository->findOneBy(['id' => $patient_id]);
+        $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if ($patient) {
 
@@ -114,7 +114,7 @@ class VaccinationController extends AbstractFOSRestController
      *     description="list des vaccinations pour un patient",
      * )
      * @OA\Parameter(
-     *     name="patient_id",
+     *     name="username",
      *     in="query",
      *     required=true,
      *     @OA\Schema(type="integer")
@@ -123,11 +123,12 @@ class VaccinationController extends AbstractFOSRestController
     public function listVaccinations(Request $request, VaccinationRepository $vaccinationRepository, PatientRepository $patientRepository)
     {
 
-        $patient_id = $request->get('patient_id');
-        $patient = $patientRepository->findOneBy(['id' => $patient_id]);
+
+        $email = $request->get('username');
+        $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if ($patient) {
-            $vaccinations = $vaccinationRepository->findBy(['patient' => $patient_id]);
+            $vaccinations = $vaccinationRepository->findBy(['patient' => $patient->getId()]);
             return $this->view($vaccinations, Response::HTTP_OK)->setContext((new Context())->setGroups(['vaccination']));
         } else {
             return $this->view('Le patient n\'existe pas', Response::HTTP_NOT_FOUND);

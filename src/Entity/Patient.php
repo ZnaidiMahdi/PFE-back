@@ -18,14 +18,14 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      */
     private $email;
 
@@ -48,61 +48,61 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      */
     private $code_securite_sociale;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      */
     private $profession;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      */
     private $statut_sociale;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
      */
     private $nbr_enfant;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $poids;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $taille;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $temperature;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination"})
      */
     private $frequence_cardiaque;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $tension_arterielle;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "allergie", "antecedent" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
      */
     private $glycemie;
 
@@ -142,14 +142,9 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
     private $consultations;
 
     /**
-     * @ORM\OneToMany(targetEntity=Antecedent::class, mappedBy="patient")
+     * @ORM\OneToMany(targetEntity=Access::class, mappedBy="patient")
      */
-    private $antecedents;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Allergie::class, mappedBy="patient")
-     */
-    private $allergies;
+    private $access;
 
     public function __construct()
     {
@@ -160,8 +155,7 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
         $this->vaccinations = new ArrayCollection();
         $this->questionReponses = new ArrayCollection();
         $this->consultations = new ArrayCollection();
-        $this->antecedents = new ArrayCollection();
-        $this->allergies = new ArrayCollection();
+        $this->access = new ArrayCollection();
     }
 
 
@@ -607,59 +601,29 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Antecedent>
+     * @return Collection<int, Access>
      */
-    public function getAntecedents(): Collection
+    public function getAccess(): Collection
     {
-        return $this->antecedents;
+        return $this->access;
     }
 
-    public function addAntecedent(Antecedent $antecedent): self
+    public function addAccess(Access $access): self
     {
-        if (!$this->antecedents->contains($antecedent)) {
-            $this->antecedents[] = $antecedent;
-            $antecedent->setPatient($this);
+        if (!$this->access->contains($access)) {
+            $this->access[] = $access;
+            $access->setPatient($this);
         }
 
         return $this;
     }
 
-    public function removeAntecedent(Antecedent $antecedent): self
+    public function removeAccess(Access $access): self
     {
-        if ($this->antecedents->removeElement($antecedent)) {
+        if ($this->access->removeElement($access)) {
             // set the owning side to null (unless already changed)
-            if ($antecedent->getPatient() === $this) {
-                $antecedent->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Allergie>
-     */
-    public function getAllergies(): Collection
-    {
-        return $this->allergies;
-    }
-
-    public function addAllergy(Allergie $allergy): self
-    {
-        if (!$this->allergies->contains($allergy)) {
-            $this->allergies[] = $allergy;
-            $allergy->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAllergy(Allergie $allergy): self
-    {
-        if ($this->allergies->removeElement($allergy)) {
-            // set the owning side to null (unless already changed)
-            if ($allergy->getPatient() === $this) {
-                $allergy->setPatient(null);
+            if ($access->getPatient() === $this) {
+                $access->setPatient(null);
             }
         }
 

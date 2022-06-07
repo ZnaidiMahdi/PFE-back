@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Access;
 use App\Entity\Docteur;
 use App\Entity\User;
+use App\Repository\AccessRepository;
 use App\Repository\DocteurRepository;
+use App\Repository\PatientRepository;
 use App\Repository\PatientsDocteursRepository;
 use App\Repository\UserRepository;
 use App\Services\FileUploader;
@@ -12,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +43,7 @@ class DocteurController extends AbstractFOSRestController
 
     /**
      * @OA\Tag(name="Docteur")
-     * @Route("/api/regisstre/docteur", name="registre_docteur", methods={"POST"})
+     * @Route("/api/registre/docteur", name="registre_docteur", methods={"POST"})
      * @OA\Response(
      *     response=200,
      *     description="Inscription docteur",
@@ -186,7 +190,7 @@ class DocteurController extends AbstractFOSRestController
             $adresse_etab = $request->get('adresse_etab');
 
             $files = $fileUploader->upload($request);
-            $photo = $files['photo'];
+            //  $photo = $files['photo'];
 
             $user = new User();
 
@@ -201,7 +205,7 @@ class DocteurController extends AbstractFOSRestController
             $user->setAdresse($adresse);
             $user->setCodePostal($code_postal);
             $user->setSexe($sexe);
-            $user->setPhoto($photo);
+            // $user->setPhoto($photo);
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();
@@ -250,7 +254,13 @@ class DocteurController extends AbstractFOSRestController
     {
 
         $email = $request->get('username');
-        $docteur = $docteurRepository->findOneBy(['email' => $email]);
+        if($email){
+            $docteur = $docteurRepository->findOneBy(['email' => $email]);
+        }else{
+            $id = $request->get('id');
+            $docteur = $docteurRepository->find($id);
+        }
+
 
         if($docteur){
             return $this->view($docteur, Response::HTTP_OK)->setContext((new Context())->setGroups(['docteur']));
@@ -430,7 +440,7 @@ class DocteurController extends AbstractFOSRestController
             $adresse = $request->get('adresse', $docteur->getUser()->getAdresse());
             $code_postal = $request->get('code_postal', $docteur->getUser()->getCodePostal());
             $sexe = $request->get('sexe', $docteur->getUser()->getSexe());
-            $photo = $request->get('photo', $docteur->getUser()->getPhoto());
+            //  $photo = $request->get('photo', $docteur->getUser()->getPhoto());
             $rpps = $request->get('rpps', $docteur->getRpps());
             $cin = $request->get('cin', $docteur->getCin());
             $email_professionnel = $request->get('email_professionnel', $docteur->getEmailProfessionnel());
@@ -456,7 +466,7 @@ class DocteurController extends AbstractFOSRestController
             $user->setAdresse($adresse);
             $user->setCodePostal($code_postal);
             $user->setSexe($sexe);
-            $user->setPhoto($photo);
+         //   $user->setPhoto($photo);
 
             $docteur->setRpps($rpps);
             $docteur->setCin($cin);
@@ -478,29 +488,29 @@ class DocteurController extends AbstractFOSRestController
             return $this->view('Ce docteur n\'existe pas', Response::HTTP_NOT_FOUND);
         }
     }
-
-    /**
-     * @OA\Tag(name="Docteur")
-     * @Route("/api/accept/patient", name="accept_patient", methods={"PATCH"})
-     * @return View
-     * @throws Exception
-     * @OA\Response(
-     *     response=200,
-     *     description="Accepter un patient ",
-     * )
-     * @OA\Parameter(
-     *     name="docteur_id",
-     *     in="query",
-     *     required=true,
-     *     @OA\Schema(type="integer")
-     * )
-     * @OA\Parameter(
-     *     name="patient_id",
-     *     in="query",
-     *     required=true,
-     *     @OA\Schema(type="integer")
-     * )
-     */
+    /*
+        /**
+         * @OA\Tag(name="Docteur")
+         * @Route("/api/accept/patient", name="accept_patient", methods={"PATCH"})
+         * @return View
+         * @throws Exception
+         * @OA\Response(
+         *     response=200,
+         *     description="Accepter un patient ",
+         * )
+         * @OA\Parameter(
+         *     name="docteur_id",
+         *     in="query",
+         *     required=true,
+         *     @OA\Schema(type="integer")
+         * )
+         * @OA\Parameter(
+         *     name="patient_id",
+         *     in="query",
+         *     required=true,
+         *     @OA\Schema(type="integer")
+         * )
+         */
     public function accepterPatient(Request $request, PatientsDocteursRepository $patientsDocteursRepository)
     {
 
@@ -576,4 +586,64 @@ class DocteurController extends AbstractFOSRestController
         return $this->view($docteurs, Response::HTTP_OK);
     }
 
+    /**
+     * @OA\Tag(name="RechercheDocteur")
+     * @Route("/api/recherche/docteurs", name="list_docteurs", methods={"POST"})
+     * @return View
+     * @throws Exception
+     * @OA\Response(
+     *     response=200,
+     *     description="list des docteurs",
+     * )
+     *  @Rest\View(serializerGroups={"docteur"})
+     **/
+    public function RechercheDocteurs(Request $request,DocteurRepository $docteurRepository)
+    {
+        $ville = $request->get('ville');
+        $specialite = $request->get('specialite');
+        $docteurs = $docteurRepository->findBy(["ville_etab"=>$ville,"sepicialite"=>$specialite]);
+        return $this->view($docteurs, Response::HTTP_OK);
+    }
+    /**
+     * @OA\Tag(name="AccessPatient")
+     * @Route("/api/new/access", name="access_patient", methods={"POST"})
+     * @return bool
+     * @throws Exception
+     * @OA\Response(
+     *     response=200,
+     *     description="demande d access pour un patient",
+     * )
+     * @OA\Parameter(
+     *     name="docteur_id",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="username",
+     *     in="query",
+     *     @OA\Schema(type="string")
+     * )
+     */
+
+    public function newAcess(Request $request, AccessRepository $accessRepository, PatientRepository $patientRepository, DocteurRepository $docteurRepository)
+    {
+        $docteur_id = $request->get('docteur_id');
+        $username = $request->get('username');
+
+        $patient = $patientRepository->findOneBy(['email' => $username]);
+        $docteur = $docteurRepository->findOneBy(['id' => $docteur_id]);
+
+        $access = $accessRepository->findOneBy(['docteur' => $docteur->getId(), 'patient'=> $patient->getId()]);
+
+        if(!$access){
+            $access = new Access();
+            $access->setDocteur($docteur)->setPatient($patient)->setIsGranted(false);
+            $this->entityManager->persist($access);
+            $this->entityManager->flush();
+            return true;
+
+        }
+        return false;
+    }
 }

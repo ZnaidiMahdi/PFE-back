@@ -334,7 +334,7 @@ class PatientController extends AbstractFOSRestController
      *     description="Modification des informations pour un patient",
      * )
      * @OA\Parameter(
-     *     name="patient_id",
+     *     name="username",
      *     in="query",
      *     @OA\Schema(type="string")
      * )
@@ -392,7 +392,7 @@ class PatientController extends AbstractFOSRestController
      * @OA\Parameter(
      *     name="code_securite_sociale",
      *     in="query",
-     *     @OA\Schema(type="string")
+     *     @OA\Schema(type="integer")
      * )
      * @OA\Parameter(
      *     name="statut_sociale",
@@ -402,7 +402,7 @@ class PatientController extends AbstractFOSRestController
      * @OA\Parameter(
      *     name="nbr_enfant",
      *     in="query",
-     *     @OA\Schema(type="string")
+     *     @OA\Schema(type="integer")
      * )
      * @return View
      * @throws Exception
@@ -410,15 +410,15 @@ class PatientController extends AbstractFOSRestController
     public function updatePatient(Request $request, PatientRepository $patientRepository)
     {
 
-        $patient_id = $request->get('patient_id');
-        $patient = $patientRepository->findOneBy(['id' => $patient_id]);
+        $email = $request->get('username');
+        $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if($patient){
 
             $password = $request->get('password');
             $nom = $request->get('nom', $patient->getUser()->getNom());
             $prenom = $request->get('prenom', $patient->getUser()->getPrenom());
-            $date_naissance = $request->get('date_naissance', $patient->getUser()->getDateNaissance());
+            //$date_naissance = $request->get('date_naissance', $patient->getUser()->getDateNaissance());
             $num_tel = $request->get('num_tel', $patient->getUser()->getNumTel());
             $ville = $request->get('ville', $patient->getUser()->getVille());
             $adresse = $request->get('adresse', $patient->getUser()->getAdresse());
@@ -437,7 +437,7 @@ class PatientController extends AbstractFOSRestController
             }
             $user->setNom($nom);
             $user->setPrenom($prenom);
-            $user->setDateNaissance(new \DateTime($date_naissance));
+            //$user->setDateNaissance(new \DateTime($date_naissance));
             $user->setNumTel($num_tel);
             $user->setVille($ville);
             $user->setAdresse($adresse);

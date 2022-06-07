@@ -127,6 +127,11 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $consultations;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Access::class, mappedBy="docteur")
+     */
+    private $access;
+
 
     public function __construct()
     {
@@ -134,6 +139,7 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
         $this->patients = new ArrayCollection();
         $this->questionReponses = new ArrayCollection();
         $this->consultations = new ArrayCollection();
+        $this->access = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -481,6 +487,36 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($consultation->getDocteur() === $this) {
                 $consultation->setDocteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Access>
+     */
+    public function getAccess(): Collection
+    {
+        return $this->access;
+    }
+
+    public function addAccess(Access $access): self
+    {
+        if (!$this->access->contains($access)) {
+            $this->access[] = $access;
+            $access->setDocteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAccess(Access $access): self
+    {
+        if ($this->access->removeElement($access)) {
+            // set the owning side to null (unless already changed)
+            if ($access->getDocteur() === $this) {
+                $access->setDocteur(null);
             }
         }
 
