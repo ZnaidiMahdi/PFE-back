@@ -43,7 +43,7 @@ class PatientController extends AbstractFOSRestController
 
     /**
      * @OA\Tag(name="Patient")
-     * @Route("/api/registre/patient", name="registre_patient", methods={"POST"})
+     * @Route("/api/registre/patienft", name="registre_patient", methods={"POST"})
      * @OA\Response(
      *     response=200,
      *     description="Inscription pour un patient",
