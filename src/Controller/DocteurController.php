@@ -23,6 +23,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use OpenApi\Annotations as OA;
 
+
 class DocteurController extends AbstractFOSRestController
 {
     /**
@@ -117,15 +118,15 @@ class DocteurController extends AbstractFOSRestController
 
     /**
      * @OA\Tag(name="Docteur")
-     * @Route("/api/update/docteur", name="update_docteur", methods={"PATCH"})
+     * @Route("/api/update/docteur", name="update_docteur", methods={"POST"})
      * @OA\Response(
      *     response=200,
      *     description="Modification des informations pour un docteur",
      * )
      * @OA\Parameter(
-     *     name="docteur_id",
+     *     name="username",
      *     in="query",
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="string")
      * )
      * @OA\Parameter(
      *     name="nom",
@@ -141,12 +142,7 @@ class DocteurController extends AbstractFOSRestController
      *     name="password",
      *     in="query",
      *     @OA\Schema(type="string")
-     * )
-     * @OA\Parameter(
-     *     name="date_naissance",
-     *     in="query",
-     *     example="20-02-2000",
-     *     @OA\Schema(type="datetime")
+     *
      * )
      * @OA\Parameter(
      *     name="num_tel",
@@ -234,21 +230,21 @@ class DocteurController extends AbstractFOSRestController
     public function updateDocteur(Request $request, DocteurRepository $docteurRepository)
     {
 
-        $docteur_id = $request->get('docteur_id');
-        $docteur = $docteurRepository->findOneBy(['id' => $docteur_id]);
+        $email = $request->get('username');
+        $docteur = $docteurRepository->findOneBy(['email' => $email]);
 
         if($docteur){
 
             $password = $request->get('password');
             $nom = $request->get('nom', $docteur->getUser()->getNom());
             $prenom = $request->get('prenom', $docteur->getUser()->getPrenom());
-            $date_naissance = $request->get('date_naissance', $docteur->getUser()->getDateNaissance());
+            //$date_naissance = $request->get('date_naissance', $docteur->getUser()->getDateNaissance());
             $num_tel = $request->get('num_tel', $docteur->getUser()->getNumTel());
             $ville = $request->get('ville', $docteur->getUser()->getVille());
             $adresse = $request->get('adresse', $docteur->getUser()->getAdresse());
             $code_postal = $request->get('code_postal', $docteur->getUser()->getCodePostal());
             $sexe = $request->get('sexe', $docteur->getUser()->getSexe());
-            //  $photo = $request->get('photo', $docteur->getUser()->getPhoto());
+            $photo = $request->get('photo', $docteur->getUser()->getPhoto());
             $rpps = $request->get('rpps', $docteur->getRpps());
             $cin = $request->get('cin', $docteur->getCin());
             $email_professionnel = $request->get('email_professionnel', $docteur->getEmailProfessionnel());
@@ -268,13 +264,13 @@ class DocteurController extends AbstractFOSRestController
             }
             $user->setNom($nom);
             $user->setPrenom($prenom);
-            $user->setDateNaissance(new \DateTime($date_naissance));
+            //$user->setDateNaissance(new \DateTime($date_naissance));
             $user->setNumTel($num_tel);
             $user->setVille($ville);
             $user->setAdresse($adresse);
             $user->setCodePostal($code_postal);
             $user->setSexe($sexe);
-         //   $user->setPhoto($photo);
+            $user->setPhoto($photo);
 
             $docteur->setRpps($rpps);
             $docteur->setCin($cin);
@@ -380,13 +376,14 @@ class DocteurController extends AbstractFOSRestController
 
     /**
      * @OA\Tag(name="Docteur")
-     * @Route("/api/list/docteurs", name="list_docteurs", methods={"GET"})
+     * @Route("/api/list/docteurs", name="list_docteurs", methods={"POST"})
      * @return View
      * @throws Exception
      * @OA\Response(
      *     response=200,
      *     description="list des docteurs",
      * )
+     * @Rest\View(serializerGroups={"docteur"})
      **/
     public function listDocteurs(DocteurRepository $docteurRepository)
     {;

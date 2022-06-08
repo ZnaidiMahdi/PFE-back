@@ -149,7 +149,7 @@ class ExperienceController extends AbstractFOSRestController
 
     /**
      * @OA\Tag(name="Experience")
-     * @Route("/api/update/experience", name="update_experience", methods={"PATCH"})
+     * @Route("/api/update/experience", name="update_experience", methods={"POST"})
      * @OA\Response(
      *     response=200,
      *     description="Modification d'une experience pour un docteur",

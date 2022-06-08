@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Access;
 use App\Repository\AccessRepository;
+use App\Repository\DocteurRepository;
 use App\Repository\PatientsDocteursRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -78,4 +79,39 @@ class AccessController extends AbstractFOSRestController
         }
     }
 
+    /**
+     * @OA\Tag(name="Docteur")
+     * @Route("/api/list/access", name="listaccess", methods={"POST"})
+     * @return View
+     * @throws Exception
+     * @OA\Response(
+     *     response=200,
+     *     description="Liste des accées ",
+     * )
+     * @OA\Parameter(
+     *     name="username",
+     *     in="query",
+     *     @OA\Schema(type="string")
+     * )
+     * @Rest\View(serializerGroups={"access"})
+     */
+    public function listaccess(Request $request ,AccessRepository $accessRepository, DocteurRepository $docteurRepository)
+    {
+
+        $username = $request->get('username');
+        $docteur = $docteurRepository->findOneBy(['email' => $username]);
+
+        // header('Content-Type: application/json; charset=utf-8');
+        //die(get_class($docteur));
+
+        if ($docteur) {
+            $access = $accessRepository->findBy(['docteur' => $docteur->getId(), 'isGranted' => false]);
+            return $this->view($access);
+        } else {
+            return $this->view('Le patient n\'existe pas', Response::HTTP_NOT_FOUND);
+        }
+    }
+
 }
+
+

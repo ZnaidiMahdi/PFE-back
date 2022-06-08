@@ -72,6 +72,8 @@ class ConsutlationController extends AbstractFOSRestController
         $patient = $patientRepository->findOneBy(['email' => $email_patient]);
         $titre = $request->get('titre');
         $diagnostic = $request->get('diagnostic');
+        $document = $request->get('document');
+
 
         $files = $fileUploader->upload($request);
         $document = $files['document'];

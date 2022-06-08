@@ -18,14 +18,14 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse","access" })
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse","access" })
      */
     private $email;
 

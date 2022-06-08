@@ -19,14 +19,14 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @Groups({"docteur","experience"})
+     * @Groups({"docteur","experience","access"})
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"docteur","experience"})
+     * @Groups({"docteur","experience","access"})
      */
     private $email;
 
