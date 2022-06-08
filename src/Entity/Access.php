@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Repository\Acc;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=AccessRepository::class)
@@ -13,22 +13,26 @@ class Access
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
+     * @Groups({"access" })
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"access" })
      */
     private $isGranted;
 
     /**
      * @ORM\ManyToOne(targetEntity=Docteur::class, inversedBy="access")
+     * @Groups({"access" })
      */
     private $docteur;
 
     /**
      * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="access")
+     * @Groups({"access" })
      */
     private $patient;
 

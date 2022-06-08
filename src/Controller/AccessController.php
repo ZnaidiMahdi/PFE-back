@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
+use FOS\RestBundle\Controller\Annotations as Rest;
+
 
 class AccessController extends AbstractFOSRestController
 {
@@ -83,7 +85,6 @@ class AccessController extends AbstractFOSRestController
      * @OA\Tag(name="Docteur")
      * @Route("/api/list/access", name="listaccess", methods={"POST"})
      * @return View
-     * @throws Exception
      * @OA\Response(
      *     response=200,
      *     description="Liste des accées ",
@@ -93,7 +94,7 @@ class AccessController extends AbstractFOSRestController
      *     in="query",
      *     @OA\Schema(type="string")
      * )
-     * @Rest\View(serializerGroups={"access"})
+     * @Rest\View (serializerGroups={"access"})
      */
     public function listaccess(Request $request ,AccessRepository $accessRepository, DocteurRepository $docteurRepository)
     {
