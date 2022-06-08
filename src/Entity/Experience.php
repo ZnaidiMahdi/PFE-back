@@ -39,7 +39,7 @@ class Experience
     private $description;
 
     /**
-     * @ORM\ManyToOne(targetEntity=docteur::class, inversedBy="experiences")
+     * @ORM\ManyToOne(targetEntity=Docteur::class, inversedBy="experiences")
      * @Groups({"experience"})
      */
     private $docteur;

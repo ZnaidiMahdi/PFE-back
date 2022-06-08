@@ -33,12 +33,12 @@ class Consultation
     private $diagnostic;
 
     /**
-     * @ORM\ManyToOne(targetEntity=docteur::class, inversedBy="consultations")
+     * @ORM\ManyToOne(targetEntity=Docteur::class, inversedBy="consultations")
      */
     private $docteur;
 
     /**
-     * @ORM\ManyToOne(targetEntity=patient::class, inversedBy="consultations")
+     * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="consultations")
      */
     private $patient;
 

@@ -334,8 +334,8 @@ class NewUserController extends AbstractFOSRestController
             $user->setAdresse($adresse);
             $user->setCodePostal($code_postal);
             $user->setSexe($sexe);
-            $user->setIsPatient(1);
-            $user->setIsDocteur(0);
+            $user->setIsPatient(0);
+            $user->setIsDocteur(1);
 
             if (array_key_exists('photo', $files)) {
                 $photo = $files['photo'];

@@ -50,7 +50,7 @@ class QuestionReponse
     private $patient;
 
     /**
-     * @ORM\ManyToOne(targetEntity=dOCTEUR::class, inversedBy="questionReponses")
+     * @ORM\ManyToOne(targetEntity=Docteur::class, inversedBy="questionReponses")
      * @Groups({"question_reponse" })
      */
     private $docteur;
