@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\ConsultationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity(repositoryClass=ConsultationRepository::class)
@@ -13,37 +15,44 @@ class Consultation
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
+     * @Groups({"consultation" })
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"consultation" })
      */
     private $titre;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"consultation" })
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"consultation" })
      */
     private $diagnostic;
 
     /**
      * @ORM\ManyToOne(targetEntity=Docteur::class, inversedBy="consultations")
+     * @Groups({"consultation" })
      */
     private $docteur;
 
     /**
      * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="consultations")
+     * @Groups({"consultation" })
      */
     private $patient;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"consultation" })
      */
     private $document;
 

@@ -8,6 +8,7 @@ use App\Repository\DocteurRepository;
 use App\Repository\PatientRepository;
 use App\Services\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
+use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
@@ -132,8 +133,7 @@ class ConsutlationController extends AbstractFOSRestController
         if(!$consultations){
             return $this->view('les consultations n\'existe pas', Response::HTTP_NOT_FOUND);
         } else {
-
-            return $this->view($consultations, Response::HTTP_OK);
+            return $this->view($consultations, Response::HTTP_OK)->setContext((new Context())->setGroups(['consultation']));
         }
     }
 }

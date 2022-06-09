@@ -17,14 +17,14 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse","access" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse","access", "consultation"})
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse","access" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse","access", "consultation"})
      */
     private $email;
 
@@ -47,37 +47,37 @@ class Patient implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "consultation"})
      */
     private $code_securite_sociale;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "consultation"})
      */
     private $profession;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "consultation"})
      */
     private $statut_sociale;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination", "question_reponse", "consultation"})
      */
     private $nbr_enfant;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination"})
      */
     private $poids;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination" })
+     * @Groups({"patient","traitement","hospitalisation","maladie","vaccination"})
      */
     private $taille;
 

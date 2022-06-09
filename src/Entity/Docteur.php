@@ -19,14 +19,14 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @Groups({"docteur","experience","access"})
+     * @Groups({"docteur","experience","access","consultation"})
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"docteur","experience","access"})
+     * @Groups({"docteur","experience","access","consultation"})
      */
     private $email;
 
@@ -43,37 +43,37 @@ class Docteur implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"docteur","experience"})
+     * @Groups({"docteur","experience","consultation"})
      */
     private $rpps;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"docteur","experience"})
+     * @Groups({"docteur","experience","consultation"})
      */
     private $cin;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur","experience"})
+     * @Groups({"docteur","experience","consultation"})
      */
     private $email_professionnel;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur","experience"})
+     * @Groups({"docteur","experience","consultation"})
      */
     private $sepicialite;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur","experience"})
+     * @Groups({"docteur","experience","consultation"})
      */
     private $langues;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"docteur","experience"})
+     * @Groups({"docteur","experience","consultation"})
      */
     private $nom_etab;
 
