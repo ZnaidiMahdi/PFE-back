@@ -506,12 +506,12 @@ class DocteurController extends AbstractFOSRestController
      * @return View
      * @throws Exception
      */
-    public function ajoutHospitalisationParDocteur(Request $request, DocteurRepository $docteurRepository, AccessRepository $accessRepository)
+    public function ajoutHospitalisationParDocteur(Request $request,PatientRepository $patientRepository, DocteurRepository $docteurRepository, AccessRepository $accessRepository)
     {
         $email = $request->get('username');
         $email_patient = $request->get('email_patient');
         $docteur = $docteurRepository->findOneBy(['email' => $email]);
-        $patient = $docteurRepository->findOneBy(['email' => $email_patient]);
+        $patient = $patientRepository->findOneBy(['email' => $email_patient]);
         $patient_docteur = $accessRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
 
         if($patient_docteur){
@@ -568,7 +568,7 @@ class DocteurController extends AbstractFOSRestController
         $email = $request->get('username');
         $email_patient = $request->get('email_patient');
         $docteur = $docteurRepository->findOneBy(['email' => $email]);
-        $patient = $docteurRepository->findOneBy(['email' => $email_patient]);
+        $patient = $patientRepository->findOneBy(['email' => $email_patient]);
         $patient_docteur = $accessRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
 
         if($patient_docteur){
@@ -629,7 +629,7 @@ class DocteurController extends AbstractFOSRestController
         $email = $request->get('username');
         $email_patient = $request->get('email_patient');
         $docteur = $docteurRepository->findOneBy(['email' => $email]);
-        $patient = $docteurRepository->findOneBy(['email' => $email_patient]);
+        $patient = $patientRepository->findOneBy(['email' => $email_patient]);
         $patient_docteur = $accessRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
 
         $nom = $request->get('nom');
@@ -684,7 +684,7 @@ class DocteurController extends AbstractFOSRestController
         $email = $request->get('username');
         $email_patient = $request->get('email_patient');
         $docteur = $docteurRepository->findOneBy(['email' => $email]);
-        $patient = $docteurRepository->findOneBy(['email' => $email_patient]);
+        $patient = $patientRepository->findOneBy(['email' => $email_patient]);
         $patient_docteur = $accessRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
 
         if($patient_docteur){
