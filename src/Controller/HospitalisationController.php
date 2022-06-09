@@ -88,6 +88,7 @@ class HospitalisationController extends AbstractFOSRestController
             $hospitalisation->setDateDebut(new \DateTime($date_debut));
             $hospitalisation->setCommentaire($commentaire);
             $hospitalisation->setPatient($patient);
+            $hospitalisation->setAuteur('patient');
 
             $this->entityManager->persist($hospitalisation);
             $this->entityManager->flush();
@@ -120,7 +121,7 @@ class HospitalisationController extends AbstractFOSRestController
         $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if ($patient) {
-            $hospitalisations = $hospitalisationRepository->findBy(['patient' => $patient->getId()]);
+            $hospitalisations = $hospitalisationRepository->findBy(['patient' => $patient->getId(), 'auteur' => 'patient']);
             return $this->view($hospitalisations, Response::HTTP_OK)->setContext((new Context())->setGroups(['hospitalisation']));
         } else {
             return $this->view('Le patient n\'existe pas', Response::HTTP_NOT_FOUND);

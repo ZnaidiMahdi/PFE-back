@@ -50,6 +50,12 @@ class Traitement
      */
     private $patient;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"traitement"})
+     */
+    private $auteur;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -111,6 +117,18 @@ class Traitement
     public function setPatient(?patient $patient): self
     {
         $this->patient = $patient;
+
+        return $this;
+    }
+
+    public function getAuteur(): ?string
+    {
+        return $this->auteur;
+    }
+
+    public function setAuteur(?string $auteur): self
+    {
+        $this->auteur = $auteur;
 
         return $this;
     }

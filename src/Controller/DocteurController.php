@@ -4,11 +4,15 @@ namespace App\Controller;
 
 use App\Entity\Access;
 use App\Entity\Docteur;
+use App\Entity\Hospitalisation;
+use App\Entity\Traitement;
 use App\Entity\User;
 use App\Repository\AccessRepository;
 use App\Repository\DocteurRepository;
+use App\Repository\HospitalisationRepository;
 use App\Repository\PatientRepository;
 use App\Repository\PatientsDocteursRepository;
+use App\Repository\TraitementRepository;
 use App\Repository\UserRepository;
 use App\Services\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
@@ -292,38 +296,40 @@ class DocteurController extends AbstractFOSRestController
             return $this->view('Ce docteur n\'existe pas', Response::HTTP_NOT_FOUND);
         }
     }
-    /*
-        /**
-         * @OA\Tag(name="Docteur")
-         * @Route("/api/accept/patient", name="accept_patient", methods={"PATCH"})
-         * @return View
-         * @throws Exception
-         * @OA\Response(
-         *     response=200,
-         *     description="Accepter un patient ",
-         * )
-         * @OA\Parameter(
-         *     name="docteur_id",
-         *     in="query",
-         *     required=true,
-         *     @OA\Schema(type="integer")
-         * )
-         * @OA\Parameter(
-         *     name="patient_id",
-         *     in="query",
-         *     required=true,
-         *     @OA\Schema(type="integer")
-         * )
-         */
-    public function accepterPatient(Request $request, PatientsDocteursRepository $patientsDocteursRepository)
+
+    /**
+     * @OA\Tag(name="Docteur")
+     * @Route("/api/accept/patient", name="accept_patient", methods={"POST"})
+     * @return View
+     * @throws Exception
+     * @OA\Response(
+     *     response=200,
+     *     description="Accepter un patient ",
+     * )
+     * @OA\Parameter(
+     *     name="username",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="patient_id",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     * )
+     */
+    public function accepterPatient(Request $request, AccessRepository $accessRepository, DocteurRepository $docteurRepository)
     {
 
-        $docteur_id = $request->get('docteur_id');
+        $email = $request->get('username');
         $patient_id = $request->get('patient_id');
-        $patient_docteur = $patientsDocteursRepository->findOneBy(['docteur' => $docteur_id, 'patient'=> $patient_id]);
+        $docteur = $docteurRepository->findOneBy(['email' => $email]);
+        $patient = $docteurRepository->findOneBy(['id' => $patient_id]);
+        $patient_docteur = $accessRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
 
         if($patient_docteur){
-            $patient_docteur->setIsAccepted(1);
+            $patient_docteur->setIsGranted(1);
             $this->entityManager->persist($patient_docteur);
             $this->entityManager->flush();
 
@@ -335,7 +341,7 @@ class DocteurController extends AbstractFOSRestController
 
     /**
      * @OA\Tag(name="Docteur")
-     * @Route("/api/refus/patient", name="refus_patient", methods={"PATCH"})
+     * @Route("/api/refus/patient", name="refus_patient", methods={"POST"})
      * @return View
      * @throws Exception
      * @OA\Response(
@@ -343,10 +349,10 @@ class DocteurController extends AbstractFOSRestController
      *     description="Refuser un patient ",
      * )
      * @OA\Parameter(
-     *     name="docteur_id",
+     *     name="username",
      *     in="query",
      *     required=true,
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="string")
      * )
      * @OA\Parameter(
      *     name="patient_id",
@@ -355,12 +361,14 @@ class DocteurController extends AbstractFOSRestController
      *     @OA\Schema(type="integer")
      * )
      */
-    public function refusPatient(Request $request, PatientsDocteursRepository $patientsDocteursRepository)
+    public function refusPatient(Request $request, AccessRepository $accessRepository, DocteurRepository $docteurRepository)
     {
 
-        $docteur_id = $request->get('docteur_id');
+        $email = $request->get('username');
         $patient_id = $request->get('patient_id');
-        $patient_docteur = $patientsDocteursRepository->findOneBy(['docteur' => $docteur_id, 'patient'=> $patient_id]);
+        $docteur = $docteurRepository->findOneBy(['email' => $email]);
+        $patient = $docteurRepository->findOneBy(['id' => $patient_id]);
+        $patient_docteur = $accessRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
 
         if($patient_docteur){
             $this->entityManager->remove($patient_docteur);
@@ -371,8 +379,6 @@ class DocteurController extends AbstractFOSRestController
             return $this->view('l\'identifiant du docteur ou du patient n\'existe pas', Response::HTTP_NOT_FOUND);
         }
     }
-
-
 
     /**
      * @OA\Tag(name="Docteur")
@@ -450,5 +456,242 @@ class DocteurController extends AbstractFOSRestController
 
         }
         return false;
+    }
+
+    /**
+     * @OA\Tag(name="Docteur")
+     * @Route("/api/ajout/hospitalisation/par/docteur", name="ajout_hospitalisation_par_docteurr", methods={"POST"})
+     * @OA\Response(
+     *     response=200,
+     *     description="Ajout une hospitalisation pour un patient par un docteur",
+     * )
+     * @OA\Parameter(
+     *     name="username",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="email_patient",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="motif",
+     *     in="query",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="duree",
+     *     in="query",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="heure",
+     *     in="query",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="commentaire",
+     *     in="query",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="date_debut",
+     *     in="query",
+     *     example="20-02-2000",
+     *     @OA\Schema(type="datetime")
+     * )
+     * @return View
+     * @throws Exception
+     */
+    public function ajoutHospitalisationParDocteur(Request $request, DocteurRepository $docteurRepository, AccessRepository $accessRepository)
+    {
+        $email = $request->get('username');
+        $email_patient = $request->get('email_patient');
+        $docteur = $docteurRepository->findOneBy(['email' => $email]);
+        $patient = $docteurRepository->findOneBy(['email' => $email_patient]);
+        $patient_docteur = $accessRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
+
+        if($patient_docteur){
+
+            $motif = $request->get('motif');
+            $duree = $request->get('duree');
+            $heure = $request->get('heure');
+            $commentaire = $request->get('commentaire');
+            $date_debut = $request->get('date_debut');
+
+            $hospitalisation = new Hospitalisation();
+
+            $hospitalisation->setMotif($motif);
+            $hospitalisation->setDuree($duree);
+            $hospitalisation->setHeure($heure);
+            $hospitalisation->setDateDebut(new \DateTime($date_debut));
+            $hospitalisation->setCommentaire($commentaire);
+            $hospitalisation->setPatient($patient_docteur->getPatient());
+            $hospitalisation->setAuteur('docteur');
+
+            $this->entityManager->persist($hospitalisation);
+            $this->entityManager->flush();
+
+            return $this->view($hospitalisation, Response::HTTP_OK)->setContext((new Context())->setGroups(['hospitalisation']));
+        } else {
+            return $this->view('le patient n\'est pas affecté au docteur ou n\'existe pas', Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    /**
+     * @OA\Tag(name="Docteur")
+     * @Route("/api/list/hospitalisation/par/docteur", name="list_hospitalisations_par_docteur", methods={"POST"})
+     * @return View
+     * @OA\Response(
+     *     response=200,
+     *     description="list des hospitalisations pour un patient ajouté par un docteur",
+     * )
+     * @OA\Parameter(
+     *     name="username",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="email_patient",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="string")
+     * )
+     */
+    public function listHospitalisationsParDocteur(Request $request, HospitalisationRepository $hospitalisationRepository, PatientRepository $patientRepository, DocteurRepository $docteurRepository, AccessRepository $accessRepository)
+    {
+
+        $email = $request->get('username');
+        $email_patient = $request->get('email_patient');
+        $docteur = $docteurRepository->findOneBy(['email' => $email]);
+        $patient = $docteurRepository->findOneBy(['email' => $email_patient]);
+        $patient_docteur = $accessRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
+
+        if($patient_docteur){
+
+            $patient = $patient_docteur->getPatient();
+            $hospitalisations = $hospitalisationRepository->findBy(['patient' => $patient->getId() , 'auteur' => 'docteur']);
+            return $this->view($hospitalisations, Response::HTTP_OK)->setContext((new Context())->setGroups(['hospitalisation']));
+        } else {
+            return $this->view('le patient n\'est pas affecté au docteur ou n\'existe pas', Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    /**
+     * @OA\Tag(name="Docteur")
+     * @Route("/api/ajout/traitement/par/docteur", name="ajout_traitement_par_docteur", methods={"POST"})
+     * @OA\Response(
+     *     response=200,
+     *     description="Ajout un traitement pour un patient par un docteur",
+     * )
+     * @OA\Parameter(
+     *     name="username",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="email_patient",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="nom",
+     *     in="query",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="postologie_trait",
+     *     in="query",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="commentaire",
+     *     in="query",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="date_trait",
+     *     in="query",
+     *     example="20-02-2000",
+     *     @OA\Schema(type="datetime")
+     * )
+     * @return View
+     * @throws \Exception
+     */
+    public function ajoutTraitement(Request $request, TraitementRepository $traitementRepository, PatientRepository $patientRepository, DocteurRepository $docteurRepository, AccessRepository $accessRepository)
+    {
+        $email = $request->get('username');
+        $email_patient = $request->get('email_patient');
+        $docteur = $docteurRepository->findOneBy(['email' => $email]);
+        $patient = $docteurRepository->findOneBy(['email' => $email_patient]);
+        $patient_docteur = $accessRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
+
+        $nom = $request->get('nom');
+        $postologie_trait = $request->get('postologie_trait');
+        $commentaire = $request->get('commentaire');
+        $date_trait = $request->get('date_trait');
+
+        if($patient_docteur){
+
+            $traitement = new Traitement();
+
+            $traitement->setNom($nom);
+            $traitement->setPosologieTrait($postologie_trait);
+            $traitement->setCommentaire($commentaire);
+            $traitement->setDateTrait(new \DateTime($date_trait));
+            $traitement->setPatient($patient_docteur->getPatient());
+            $traitement->setAuteur('docteur');
+
+            $this->entityManager->persist($traitement);
+            $this->entityManager->flush();
+
+            return $this->view($traitement, Response::HTTP_OK)->setContext((new Context())->setGroups(['traitement']));
+        } else {
+            return $this->view('le patient n\'est pas affecté au docteur ou n\'existe pas', Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    /**
+     * @OA\Tag(name="Docteur")
+     * @Route("/api/list/traitements/par/docteur", name="list_traitements_par_docteur", methods={"POST"})
+     * @return View
+     * @OA\Response(
+     *     response=200,
+     *     description="list des traitements pour un patient par docteur",
+     * )
+     * @OA\Parameter(
+     *     name="username",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="email_patient",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="string")
+     * )
+     */
+    public function listTraitementsParDocteur(Request $request, TraitementRepository $traitementRepository, PatientRepository $patientRepository, DocteurRepository $docteurRepository, AccessRepository $accessRepository)
+    {
+
+        $email = $request->get('username');
+        $email_patient = $request->get('email_patient');
+        $docteur = $docteurRepository->findOneBy(['email' => $email]);
+        $patient = $docteurRepository->findOneBy(['email' => $email_patient]);
+        $patient_docteur = $accessRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
+
+        if($patient_docteur){
+            $traitements = $traitementRepository->findBy(['patient' => $patient->getId(), 'auteur' => 'docteur']);
+            return $this->view($traitements, Response::HTTP_OK)->setContext((new Context())->setGroups(['traitement']));
+        } else {
+            return $this->view('le patient n\'est pas affecté au docteur ou n\'existe pas', Response::HTTP_NOT_FOUND);
+        }
     }
 }

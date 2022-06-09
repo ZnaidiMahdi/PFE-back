@@ -98,4 +98,42 @@ class ConsutlationController extends AbstractFOSRestController
             return $this->view('la consultation est ajoutée avec succès', Response::HTTP_OK);
         }
     }
+
+
+    /**
+     * @OA\Tag(name="Consultation")
+     * @Route("/api/list/consultations", name="list_consultations", methods={"POST"})
+     * @OA\Response(
+     *     response=200,
+     *     description="list des consultations",
+     * )
+     * @OA\Parameter(
+     *     name="username",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="email_patient",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(type="string")
+     * )
+     */
+    public function listConsultations(Request $request, DocteurRepository $docteurRepository, PatientRepository $patientRepository, ConsultationRepository $consultationRepository)
+    {
+
+        $email = $request->get('username');
+        $email_patient = $request->get('email_patient');
+        $docteur = $docteurRepository->findOneBy(['email' => $email]);
+        $patient = $docteurRepository->findOneBy(['email' => $email_patient]);
+        $consultations = $consultationRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
+
+        if(!$consultations){
+            return $this->view('les consultations n\'existe pas', Response::HTTP_NOT_FOUND);
+        } else {
+
+            return $this->view($consultations, Response::HTTP_OK);
+        }
+    }
 }

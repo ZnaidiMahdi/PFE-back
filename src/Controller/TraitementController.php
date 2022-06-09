@@ -81,6 +81,7 @@ class TraitementController extends AbstractFOSRestController
             $traitement->setCommentaire($commentaire);
             $traitement->setDateTrait(new \DateTime($date_trait));
             $traitement->setPatient($patient);
+            $traitement->setAuteur('patient');
 
             $this->entityManager->persist($traitement);
             $this->entityManager->flush();
@@ -113,7 +114,7 @@ class TraitementController extends AbstractFOSRestController
         $patient = $patientRepository->findOneBy(['email' => $email]);
 
         if ($patient) {
-            $traitements = $traitementRepository->findBy(['patient' => $patient->getId()]);
+            $traitements = $traitementRepository->findBy(['patient' => $patient->getId(), 'auteur' => 'patient']);
             return $this->view($traitements, Response::HTTP_OK)->setContext((new Context())->setGroups(['traitement']));
         } else {
             return $this->view('Le patient n\'existe pas', Response::HTTP_NOT_FOUND);
