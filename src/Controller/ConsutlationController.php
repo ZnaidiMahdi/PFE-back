@@ -126,7 +126,7 @@ class ConsutlationController extends AbstractFOSRestController
         $email = $request->get('username');
         $email_patient = $request->get('email_patient');
         $docteur = $docteurRepository->findOneBy(['email' => $email]);
-        $patient = $docteurRepository->findOneBy(['email' => $email_patient]);
+        $patient = $patientRepository->findOneBy(['email' => $email_patient]);
         $consultations = $consultationRepository->findOneBy(['docteur' => $docteur, 'patient'=> $patient]);
 
         if(!$consultations){
